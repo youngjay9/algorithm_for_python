@@ -44,10 +44,15 @@ class LinkedList:
 
         return self
 
+    """移動到 index-1 的 Node"""
+
     def traverseToIndexNode(self, index):
         currenNode = self.head
-        i = 0
 
+        if index <= 0:
+            return currenNode
+
+        i = 0
         while currenNode is not None and i < index:
             i += 1
             currenNode = currenNode.next
@@ -58,7 +63,7 @@ class LinkedList:
 
     def insertAtIndex(self, index, value):
         # 需注意以下 index 的處理
-        if index is 0:
+        if index == 0:
             self.prepend(value)
             return self.display()
 
@@ -79,7 +84,11 @@ class LinkedList:
     def removeAtIndex(self, index):
         # 走尋到 (index-1) 的元素
         holdNode = self.traverseToIndexNode(index-1)
+
         removingNode = holdNode.next
+
+        print(f"holdNode: {holdNode.data}")
+        print(f"removingNode: {removingNode.data}")
 
         holdNode.next = removingNode.next
 

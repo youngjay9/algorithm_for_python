@@ -44,15 +44,16 @@ class LinkedList:
 
         return self
 
-    """移動到 index-1 的 Node"""
+    """移動到指定 index 的 Node"""
 
     def traverseToIndexNode(self, index):
-        currenNode = self.head
 
         if index <= 0:
-            return currenNode
+            return self.head
 
+        currenNode = self.head
         i = 0
+
         while currenNode is not None and i < index:
             i += 1
             currenNode = currenNode.next
@@ -97,6 +98,21 @@ class LinkedList:
         self.length -= 1
 
         return self.display()
+
+    """透過 recursive 的機制進行 reverse, 可看 stack 執行過程的圖示"""
+
+    def reverse(self, prev, next):
+
+        if next is not None:
+            print(f"prev: {prev.data}, next:{next.data}")
+            self.reverse(next, next.next)
+            next.next = prev
+            # 一直指定 tail 的 Node
+            self.tail = prev
+            self.tail.next = None
+            print(f"r_tail:{self.tail.data}")
+        else:
+            self.head = prev
 
     def display(self):
         result = []

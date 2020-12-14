@@ -104,13 +104,14 @@ class LinkedList:
     def reverse(self, prev, next):
 
         if next is not None:
-            print(f"prev: {prev.data}, next:{next.data}")
             self.reverse(next, next.next)
+
             next.next = prev
+
             # 一直指定 tail 的 Node
             self.tail = prev
             self.tail.next = None
-            print(f"r_tail:{self.tail.data}")
+
         else:
             self.head = prev
 

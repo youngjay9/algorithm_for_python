@@ -1,3 +1,8 @@
+""" 
+在 mergesort 中會使用到此方法 
+"""
+
+
 def merge(arr1, arr2):
     lIndx = 0  # arr1 用的 index
     lLength = len(arr1)

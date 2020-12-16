@@ -64,7 +64,7 @@ class LinkedList:
 
     def insertAtIndex(self, index, value):
         # 需注意以下 index 的處理
-        if index == 0:
+        if index <= 0:
             self.prepend(value)
             return self.display()
 
@@ -83,13 +83,30 @@ class LinkedList:
         return self.display()
 
     def removeAtIndex(self, index):
+
+        # 判斷下列2種情況
+        # index <=0, 刪除第一個元素
+        if index <= 0:
+
+            nextNode = self.head.next
+
+            del self.head
+
+            # 重新指定 head
+            self.head = nextNode
+
+            self.length -= 1
+
+            return self.display()
+
+        # index 大於 list 長度,刪除最後一個元素
+        elif index >= self.length - 1:
+            index = self.length-1
+
         # 走尋到 (index-1) 的元素
         holdNode = self.traverseToIndexNode(index-1)
 
         removingNode = holdNode.next
-
-        print(f"holdNode: {holdNode.data}")
-        print(f"removingNode: {removingNode.data}")
 
         holdNode.next = removingNode.next
 

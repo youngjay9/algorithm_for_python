@@ -1,22 +1,52 @@
 from linkedlist.DoublyLinkedList import DoublyLinkedList
 
 
+class Node:
+    def __init__(self, value):
+        self.data = value
+        self.next = None
+
+
 class Stack:
 
     def __init__(self):
-        self.list = DoublyLinkedList()
+        self.top = None
+        self.length = 0
+
+    def peek(self):
+        return self.top
 
     def push(self, value):
-        self.list.append(value)
+        newNode = Node(value)
+        if self.length == 0:
+            self.top = newNode
+        else:
+            holdNode = self.top
+            self.top = newNode
+            self.top.next = holdNode
+
+        self.length += 1
+
+        return newNode.data
 
     def pop(self):
-        listLength = self.list.length
-        popNode = None
-        if listLength > 0:
-            popNode = self.list.traverseToIndexNode(listLength-1)
-            self.list.removeAtIndex(listLength-1)
+        if self.top is None:
+            return None
 
-        return popNode
+        popNode = self.top
+        popData = popNode.data
+
+        self.top = popNode.next
+        self.length -= 1
+        del popNode
+
+        return popData
 
     def display(self):
-        return self.list.display()
+        holdNode = self.top
+        result = []
+        while holdNode is not None:
+            result.append(holdNode.data)
+            holdNode = holdNode.next
+
+        return result

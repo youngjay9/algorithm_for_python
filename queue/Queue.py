@@ -48,3 +48,18 @@ class Queue:
             holdNode = holdNode.next
 
         return result
+
+
+queue = Queue()
+
+queue.enQueue(5)
+queue.enQueue(6)
+queue.enQueue(9)
+
+print(f"queue display: {queue.display()}")
+
+print(f"dequeue: {queue.deQuque()}")
+print(f"dequeue: {queue.deQuque()}")
+print(f"dequeue: {queue.deQuque()}")
+print(f"dequeue: {queue.deQuque()}")
+print(f"dequeue: {queue.deQuque()}")

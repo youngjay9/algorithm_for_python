@@ -77,7 +77,7 @@ class BinarySearchTree:
 
     """
     利用 recursive 找尋所有 node, 並用 json 表示
-    recursive 過程可看 stack 圖示
+    recursive 過程可看圖檔 traverse.jpg
     """
 
     def traverse(self, node):
@@ -103,14 +103,31 @@ class BinarySearchTree:
 
         return treeNode
 
+    """找出該 node 下的最大值"""
+
+    def findMaxNode(self, node):
+        if node is None:
+            return None
+
+        while node.right:
+            node = node.right
+
+        return node
+
     """
     在某一個 node 的左子樹中執行遞迴,
     到達最大值的 node 以後,重新指定其 parent node 的 right node.
-    因為左子束中
+    運作過程參考圖示：leftSubTree_1.jpg、leftSubTree_2.jpg
     """
 
     def leftSubTree(self, node):
-        pass
+        if node.right is None:
+            newNode = node.left
+            return newNode
+
+        node.right = self.leftSubTree(node.right)
+
+        return node
 
     def remove(self, value):
         currentNode = self.root
@@ -119,59 +136,66 @@ class BinarySearchTree:
         while currentNode is not None:
             # 找到被刪除的 node
             if value == currentNode.data:
+
+                newNode = None
+
                 # 被刪除的 node 沒有任何子節點
                 if currentNode.left is None and currentNode.right is None:
-                    if parentNode.left == currentNode:
-                        parentNode.left = None
-                    else:
-                        parentNode.right = None
+                    pass
 
                 # 被刪除的 node 沒有左節點
                 elif currentNode.left is None:
-                    if parentNode.left == currentNode:
-                        parentNode.left = currentNode.right
-                    else:
-                        parentNode.right = currentNode.right
+                    newNode = currentNode.right
 
                 # 被刪除的 node 沒有右節點
                 elif currentNode.right is None:
-                    if parentNode.left == currentNode:
-                        parentNode.left = currentNode.left
-                    else:
-                        parentNode.right = currentNode.left
+                    newNode = currentNode.left
 
                 # 被刪除的 node 有左右節點
                 else:
-                    pass
+                    # 從被刪除的節點,找它的左子樹中最大值的 node
+                    leftTreeMaxNode = self.findMaxNode(currentNode.left)
+                    # 左子樹最大值的節點去替換被刪除的節點
+                    newNode = Node(leftTreeMaxNode.data)
+                    # 重新指定原刪除節點的左子樹
+                    newNode.left = self.leftSubTree(currentNode.left)
+
+                if parentNode.left == currentNode:
+                    parentNode.left = newNode
+                else:
+                    parentNode.right = newNode
 
                 return self
 
-            # left
+            # 往左邊繼續找
             elif value < currentNode.data:
                 parentNode = currentNode
                 currentNode = currentNode.left
 
-            # right
+            # 往右邊繼續找
             elif value > currentNode.data:
                 parentNode = currentNode
                 currentNode = currentNode.right
 
+        return self
+
 
 tree = BinarySearchTree()
-tree.insert(15)
-tree.insert(9)
-tree.insert(23)
-tree.insert(3)
-tree.insert(12)
-tree.insert(17)
-tree.insert(1)
-tree.insert(8)
-tree.insert(4)
+tree.insert(40)
+tree.insert(29)
+tree.insert(60)
+tree.insert(25)
+tree.insert(37)
+tree.insert(20)
+tree.insert(27)
+tree.insert(35)
+tree.insert(38)
+tree.insert(26)
+tree.insert(28)
 
 print(f"treeNode: {json.dumps(tree.traverse(tree.root))}")
 
-# tree.remove(8)
 
-# print(f"after remove treeNode: {json.dumps(tree.traverse(tree.root))}")
+tree.remove(29)
 
-tmpNode = tree.lookup(9)
+print(f"after remove treeNode: {json.dumps(tree.traverse(tree.root))}")

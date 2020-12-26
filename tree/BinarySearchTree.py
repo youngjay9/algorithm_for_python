@@ -131,24 +131,29 @@ class BinarySearchTree:
 
     def remove(self, value):
         currentNode = self.root
+
         parentNode = None
 
         while currentNode is not None:
+
             # 找到被刪除的 node
             if value == currentNode.data:
 
                 newNode = None
 
+                """刪除節點有以下3種情況"""
                 # 被刪除的 node 沒有任何子節點
                 if currentNode.left is None and currentNode.right is None:
                     pass
 
                 # 被刪除的 node 沒有左節點
                 elif currentNode.left is None:
+                    # 指定新節點為刪除節點的右子節點
                     newNode = currentNode.right
 
                 # 被刪除的 node 沒有右節點
                 elif currentNode.right is None:
+                    # 指定新節點為刪除節點的左子節點
                     newNode = currentNode.left
 
                 # 被刪除的 node 有左右節點
@@ -157,9 +162,10 @@ class BinarySearchTree:
                     leftTreeMaxNode = self.findMaxNode(currentNode.left)
                     # 左子樹最大值的節點去替換被刪除的節點
                     newNode = Node(leftTreeMaxNode.data)
-                    # 重新指定原刪除節點的左子樹
+                    # 因左子樹中的最大值已被拿去替換刪除節點,需再重新設定
                     newNode.left = self.leftSubTree(currentNode.left)
 
+                """透過上層節點設定新節點"""
                 if parentNode.left == currentNode:
                     parentNode.left = newNode
                 else:

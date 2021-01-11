@@ -85,6 +85,7 @@ class BinarySearchTree:
         if node is None:
             return {}
 
+        # 資料結構為 dictionary
         treeNode = {}
 
         treeNode["value"] = node.data
@@ -126,6 +127,11 @@ class BinarySearchTree:
             return newNode
 
         node.right = self.leftSubTree(node.right)
+
+        # 重新計算 Node 的高度
+        # node.height = =NodeHeight(p)
+
+        # Balance Factor and Rotation
 
         return node
 

@@ -55,7 +55,9 @@ class AVLTree:
 
         return treeNode
 
-    def nodeheight(self, node):
+    """計算每個 Node 的高度"""
+
+    def nodeHeight(self, node):
         hL = 0
         hR = 0
 
@@ -65,10 +67,44 @@ class AVLTree:
             elif node.right is not None:
                 hR = node.right.height
 
+        # 加 1 代表本身的高度
         if hL > hR:
             return hL + 1
         else:
             return hR + 1
+
+    """計算每個 Node 的平衡因子"""
+
+    def balanceFactor(self, node):
+
+        hL = 0
+        hR = 0
+
+        if node is not None:
+            if node.left is not None:
+                hL = node.left.height
+            elif node.right is not None:
+                hR = node.right.height
+
+        return hL - hR
+
+    def llRotation(self, p):
+        pl = p.left
+        plr = pl.right
+
+        # 中間值往上拉,小的放左邊,大的放右邊
+        pl.right = p
+        # 中間值的右子樹放在大值的左子樹
+        p.left = plr
+
+        # 有異動子樹的 Node 需重新計算高度
+        pl.height = self.nodeHeight(pl)
+        p.height = self.nodeHeight(p)
+
+        if self.root == p:
+            self.root = pl
+
+        return pl
 
     def insert(self, node, value):
 
@@ -80,21 +116,33 @@ class AVLTree:
             newNode.height = 1
             return newNode
 
-        if value < node.left:
+        if value < node.data:
             node.left = self.insert(node.left, value)
-        elif value > node.right:
+        elif value > node.data:
             node.right = self.insert(node.right, value)
 
         # Update height
-        node.height = nodeHeight(node)
+        node.height = self.nodeHeight(node)
 
         # 執行 Balance Factor 檢核時，會檢核以下類型
+        if self.balanceFactor(node) == 2 and self.balanceFactor(node.left) == 1:
+            return self.llRotation(node)
+
+        return node
 
 
 def main():
     avl_tree = AVLTree()
 
+    avl_tree.root = avl_tree.insert(avl_tree.root, 30)
+    avl_tree.root = avl_tree.insert(avl_tree.root, 20)
+    avl_tree.root = avl_tree.insert(avl_tree.root, 40)
     avl_tree.root = avl_tree.insert(avl_tree.root, 10)
+    avl_tree.root = avl_tree.insert(avl_tree.root, 25)
+    avl_tree.root = avl_tree.insert(avl_tree.root, 50)
+    avl_tree.root = avl_tree.insert(avl_tree.root, 5)
+    avl_tree.root = avl_tree.insert(avl_tree.root, 13)
+    avl_tree.root = avl_tree.insert(avl_tree.root, 28)
 
     avl_tree.traverse(avl_tree.root)
 

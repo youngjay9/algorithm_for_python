@@ -80,15 +80,15 @@ class AVLTree:
         hL = 0
         hR = 0
 
-        if node is not None:
-            if node.left is not None:
-                hL = node.left.height
-            elif node.right is not None:
-                hR = node.right.height
+        if node is not None and node.left is not None:
+            hL = node.left.height
+
+        if node is not None and node.right is not None:
+            hR = node.right.height
 
         return hL - hR
 
-    def llRotation(self, p):
+    def LLRotation(self, p):
         pl = p.left
         plr = pl.right
 
@@ -105,6 +105,77 @@ class AVLTree:
             self.root = pl
 
         return pl
+
+    def LRRotation(self, p):
+        pl = p.left
+        # 中間值
+        plr = pl.right
+
+        # 中間值的左子樹放小的右邊
+        pl.right = plr.left
+        # 中間值的右子樹放大的左邊
+        p.left = plr.right
+
+        # 中間值往上拉,小的放左邊,大的放右邊
+        plr.left = pl
+        plr.right = p
+
+        # 有異動子樹的 Node 都需重新計算高度
+        pl.height = self.nodeHeight(pl)
+        p.height = self.nodeHeight(p)
+        plr.height = self.nodeHeight(plr)
+
+        if self.root == p:
+            self.root = plr
+
+        return plr
+
+    def RRRotation(self, p):
+        # 中間值
+        pr = p.right
+        prl = pr.left
+
+        # 中間值的左子樹放在小的右邊
+        p.right = prl
+
+        # 中間值往上拉,小的放左邊,大的放右邊
+        pr.left = p
+
+        # 有異動子樹的 Node 都需重新計算高度
+        p.height = self.nodeHeight(p)
+        pr.height = self.nodeHeight(pr)
+
+        if self.root == p:
+            self.root = pr
+
+        return pr
+
+    def RLRotation(self, p):
+        # 大值
+        pr = p.right
+
+        # 中間值
+        prl = pr.left
+
+        # 中間值的左子樹放小的右邊
+        p.right = prl.left
+
+        # 中間值的右子樹放大的左邊
+        pr.left = prl.right
+
+        # 中間值往上拉,小的放左邊,大的放右邊
+        prl.left = p
+        prl.right = pr
+
+        # 有異動子樹的 Node 都需重新計算高度
+        p.height = self.nodeHeight(p)
+        pr.height = self.nodeHeight(pr)
+        prl.height = self.nodeHeight(prl)
+
+        if self.root == p:
+            self.root = prl
+
+        return prl
 
     def insert(self, node, value):
 
@@ -124,9 +195,28 @@ class AVLTree:
         # Update height
         node.height = self.nodeHeight(node)
 
-        # 執行 Balance Factor 檢核時，會檢核以下類型
+        bf = self.balanceFactor(node)
+
+        print(f"insert: {value} node value:{node.data} bf:{bf}")
+
+        # 用 3 個 Node 執行 Balance Factor 檢核
         if self.balanceFactor(node) == 2 and self.balanceFactor(node.left) == 1:
-            return self.llRotation(node)
+            return self.LLRotation(node)
+
+        elif self.balanceFactor(node) == 2 and self.balanceFactor(node.left) == -1:
+            return self.LRRotation(node)
+
+        elif self.balanceFactor(node) == -2 and self.balanceFactor(node.right) == -1:
+            return self.RRRotation(node)
+
+        elif self.balanceFactor(node) == -2 and self.balanceFactor(node.right) == 1:
+            return self.RLRotation(node)
+
+        elif self.balanceFactor(node) == 2 and self.balanceFactor(node.left) == 0:
+            return self.LLRotation(node)
+
+        elif self.balanceFactor(node) == -2 and self.balanceFactor(node.right) == 0:
+            return self.RRRotation(node)
 
         return node
 
@@ -134,17 +224,19 @@ class AVLTree:
 def main():
     avl_tree = AVLTree()
 
-    avl_tree.root = avl_tree.insert(avl_tree.root, 30)
-    avl_tree.root = avl_tree.insert(avl_tree.root, 20)
-    avl_tree.root = avl_tree.insert(avl_tree.root, 40)
-    avl_tree.root = avl_tree.insert(avl_tree.root, 10)
-    avl_tree.root = avl_tree.insert(avl_tree.root, 25)
-    avl_tree.root = avl_tree.insert(avl_tree.root, 50)
-    avl_tree.root = avl_tree.insert(avl_tree.root, 5)
-    avl_tree.root = avl_tree.insert(avl_tree.root, 13)
-    avl_tree.root = avl_tree.insert(avl_tree.root, 28)
+    # testing LRRotation
+    # avl_tree.root = avl_tree.insert(avl_tree.root, 50)
+    # avl_tree.root = avl_tree.insert(avl_tree.root, 10)
+    # avl_tree.root = avl_tree.insert(avl_tree.root, 20)
+    # avl_tree.traverse(avl_tree.root)
 
-    avl_tree.traverse(avl_tree.root)
+    avl_tree.root = avl_tree.insert(avl_tree.root, 10)
+    avl_tree.root = avl_tree.insert(avl_tree.root, 20)
+    avl_tree.root = avl_tree.insert(avl_tree.root, 30)
+    avl_tree.root = avl_tree.insert(avl_tree.root, 25)
+    avl_tree.root = avl_tree.insert(avl_tree.root, 28)
+    avl_tree.root = avl_tree.insert(avl_tree.root, 27)
+    avl_tree.root = avl_tree.insert(avl_tree.root, 5)
 
     print(f"avl_tree:{json.dumps(avl_tree.traverse(avl_tree.root))}")
 

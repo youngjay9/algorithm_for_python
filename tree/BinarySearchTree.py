@@ -128,11 +128,6 @@ class BinarySearchTree:
 
         node.right = self.leftSubTree(node.right)
 
-        # 重新計算 Node 的高度
-        # node.height = =NodeHeight(p)
-
-        # Balance Factor and Rotation
-
         return node
 
     def remove(self, value):

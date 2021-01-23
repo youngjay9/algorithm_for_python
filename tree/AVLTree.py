@@ -64,7 +64,8 @@ class AVLTree:
         if node is not None:
             if node.left is not None:
                 hL = node.left.height
-            elif node.right is not None:
+
+            if node.right is not None:
                 hR = node.right.height
 
         # 加 1 代表本身的高度
@@ -177,6 +178,20 @@ class AVLTree:
 
         return prl
 
+    """ 尋找左子樹中最大值的 Node"""
+
+    def findLeftSubTreeMaxNode(self, node):
+        while node is not None and node.right is not None:
+            node = node.right
+        return node
+
+    """ 尋找右子樹中最小值的 Node"""
+
+    def findRightSubTreeMinNode(self, node):
+        while node is not None and node.left is not None:
+            node = node.left
+        return node
+
     def insert(self, node, value):
 
         newNode = None
@@ -197,7 +212,12 @@ class AVLTree:
 
         bf = self.balanceFactor(node)
 
-        print(f"insert: {value} node value:{node.data} bf:{bf}")
+        bfL = self.balanceFactor(node.left)
+
+        bfR = self.balanceFactor(node.right)
+
+        print(
+            f"insert: {value} node value:{node.data} bf:{bf}, bfL:{bfL}, bfR:{bfR}")
 
         # 用 3 個 Node 執行 Balance Factor 檢核
         if self.balanceFactor(node) == 2 and self.balanceFactor(node.left) == 1:
@@ -212,6 +232,60 @@ class AVLTree:
         elif self.balanceFactor(node) == -2 and self.balanceFactor(node.right) == 1:
             return self.RLRotation(node)
 
+        return node
+
+    def remove(self, node, value):
+        if node is None:
+            return None
+
+        if node.left is None and node.right is None:
+            if node == self.root:
+                self.root = None
+            del node
+            return None
+
+        if value < node.data:
+            node.left = self.remove(node.left, value)
+
+        elif value > node.data:
+            node.right = self.remove(node.right, value)
+
+        # 找到刪除的 Node
+        else:
+            q = None
+            # 左子樹高度 大於右子樹
+            if self.nodeHeight(node.left) > self.nodeHeight(node.right):
+                # 從左子樹中找最大值的 Node 取代被刪除的 Node
+                q = self.findLeftSubTreeMaxNode(node.left)
+                node.data = q.data
+                # 左子樹中最大值的 Node 需被刪除
+                node.left = self.remove(node.left, q.data)
+            else:
+                # 從右子樹中找最小值的 Node 取代被刪除的 Node
+                q = self.findRightSubTreeMinNode(node.right)
+                node.data = q.data
+                node.right = self.remove(node.right, q.data)
+
+        # Update height
+        node.height = self.nodeHeight(node)
+
+        bf = self.balanceFactor(node)
+
+        print(f"insert: {value} node value:{node.data} bf:{bf}")
+
+        # 用 3 個 Node 執行 Balance Factor 檢核
+        if self.balanceFactor(node) == 2 and self.balanceFactor(node.left) == 1:
+            return self.LLRotation(node)
+
+        elif self.balanceFactor(node) == 2 and self.balanceFactor(node.left) == -1:
+            return self.LRRotation(node)
+
+        elif self.balanceFactor(node) == -2 and self.balanceFactor(node.right) == -1:
+            return self.RRRotation(node)
+
+        elif self.balanceFactor(node) == -2 and self.balanceFactor(node.right) == 1:
+            return self.RLRotation(node)
+        # remove 的情境需多做以下 2 種 BF 的判斷
         elif self.balanceFactor(node) == 2 and self.balanceFactor(node.left) == 0:
             return self.LLRotation(node)
 
@@ -239,6 +313,11 @@ def main():
     avl_tree.root = avl_tree.insert(avl_tree.root, 5)
 
     print(f"avl_tree:{json.dumps(avl_tree.traverse(avl_tree.root))}")
+
+    # avl_tree.remove(avl_tree.root, 28)
+
+    # print(
+    #     f"after remove 28, avl_tree:{json.dumps(avl_tree.traverse(avl_tree.root))}")
 
 
 main()

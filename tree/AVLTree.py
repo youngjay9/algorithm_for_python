@@ -99,8 +99,9 @@ class AVLTree:
         p.left = plr
 
         # 有異動子樹的 Node 需重新計算高度
-        pl.height = self.nodeHeight(pl)
+        # 需注意：因為 p 是在 pl 的子樹需先計算 p 的高度，再計算 pl 的高度
         p.height = self.nodeHeight(p)
+        pl.height = self.nodeHeight(pl)
 
         if self.root == p:
             self.root = pl
@@ -122,6 +123,7 @@ class AVLTree:
         plr.right = p
 
         # 有異動子樹的 Node 都需重新計算高度
+        # 需注意：在下層的 node 需先計算高度
         pl.height = self.nodeHeight(pl)
         p.height = self.nodeHeight(p)
         plr.height = self.nodeHeight(plr)
@@ -143,6 +145,7 @@ class AVLTree:
         pr.left = p
 
         # 有異動子樹的 Node 都需重新計算高度
+        # 需注意：在下層的 node 需先計算高度
         p.height = self.nodeHeight(p)
         pr.height = self.nodeHeight(pr)
 
@@ -169,8 +172,9 @@ class AVLTree:
         prl.right = pr
 
         # 有異動子樹的 Node 都需重新計算高度
-        p.height = self.nodeHeight(p)
+        # 需注意：在下層的 node 需先計算高度
         pr.height = self.nodeHeight(pr)
+        p.height = self.nodeHeight(p)
         prl.height = self.nodeHeight(prl)
 
         if self.root == p:
@@ -269,10 +273,6 @@ class AVLTree:
         # Update height
         node.height = self.nodeHeight(node)
 
-        bf = self.balanceFactor(node)
-
-        print(f"insert: {value} node value:{node.data} bf:{bf}")
-
         # 用 3 個 Node 執行 Balance Factor 檢核
         if self.balanceFactor(node) == 2 and self.balanceFactor(node.left) == 1:
             return self.LLRotation(node)
@@ -314,10 +314,10 @@ def main():
 
     print(f"avl_tree:{json.dumps(avl_tree.traverse(avl_tree.root))}")
 
-    # avl_tree.remove(avl_tree.root, 28)
+    avl_tree.remove(avl_tree.root, 28)
 
-    # print(
-    #     f"after remove 28, avl_tree:{json.dumps(avl_tree.traverse(avl_tree.root))}")
+    print(
+        f"after remove 28, avl_tree:{json.dumps(avl_tree.traverse(avl_tree.root))}")
 
 
 main()

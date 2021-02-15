@@ -314,7 +314,7 @@ def main():
 
     print(f"avl_tree:{json.dumps(avl_tree.traverse(avl_tree.root))}")
 
-    avl_tree.remove(avl_tree.root, 28)
+    avl_tree.remove(avl_tree.root, 25)
 
     print(
         f"after remove 28, avl_tree:{json.dumps(avl_tree.traverse(avl_tree.root))}")

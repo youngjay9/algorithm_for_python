@@ -17,9 +17,19 @@ class Node:
         self.height = None
 
 
-class RedBlackTree():
+class LeafNode():
     def __init__(self):
-        self.root = None
+        self.data = None
+        self.color = Color.BLACK
+        self.left = None
+        self.right = None
+
+
+class RedBlackTree():
+
+    def __init__(self):
+        self.leafnode = LeafNode()  # 為節省記憶體空間,提供其它 node 預設的 leafNode 都指向同一個 leafNode
+        self.root = self.leafnode
 
     def __print_helper(self, node, indent, last):
         # print the tree structure on the screen
@@ -41,61 +51,174 @@ class RedBlackTree():
     def pretty_print(self):
         self.__print_helper(self.root, "", True)
 
-    """計算每個 Node 的高度"""
+    """right rotate(參考圖式)"""
 
-    def nodeHeight(self, node):
-        hL = 0
-        hR = 0
+    def right_rotate(self, p):
+        # 中間值: pl
+        pl = p.left
 
-        if node is not None:
-            if node.left is not None:
-                hL = node.left.height
+        # 中間值:pl 的右子樹
+        plr = pl.right
 
-            if node.right is not None:
-                hR = node.right.height
-
-        # 加 1 代表本身的高度
-        if hL > hR:
-            return hL + 1
+        # 中間值:pl 往上拉
+        pl.parent = p.parent
+        if p == p.parent.right:
+            p.parent.right = pl
         else:
-            return hR + 1
+            p.parent.left = pl
+
+        # p 原本是 root node,需換成 pl
+        if p.parent == None:
+            self.root = pl
+
+        # 大值:p 放右邊
+        pl.right = p
+        p.parent = pl
+
+        # 中間值的右子樹:plr 放大值:p 的左邊
+        p.left = plr
+        if plr != self.leafnode:
+            plr.parent = p
+
+    """left_rotate(參考圖式)"""
+
+    def left_rotate(self, p):
+
+        # 中間值: pr
+        pr = p.right
+
+        # 中間值:pr 的左子樹放在小值:p 的右邊
+        prl = pr.left
+        p.right = prl
+        if prl != self.leafnode:
+            prl.parent = p
+
+        # p 原本是 root node,需換成 pr
+        if p.parent == None:
+            self.root = pr
+
+        # 中間值往上拉
+        pr.parent = p.parent
+
+        if p == p.parent.left:
+            p.parent.left = pr
+        else:
+            p.parent.right = pr
+
+        # 小值放左邊
+        pr.left = p
+        p.parent = pr
 
     def __fix_insert(self, k):
         while k.parent.color == Color.RED:
-            pass
 
-    def insert(self, node, key):
-        """新增的節點"""
+            # P is right child of G
+            if k.parent == k.parent.parent.right:
+                u = k.parent.parent.left  # uncle node
 
-        if node is None:
-            newNode = Node(key)
-            newNode.left = None
-            newNode.right = None
-            newNode.color = Color.RED  # new node must be red
-            newNode.height = 1
-            return newNode
+                # uncle is red
+                # case 3.1 re-color
+                if u.color == Color.RED:
+                    u.color = Color.BLACK
+                    k.parent.color = Color.BLACK
+                    k.parent.parent.color = Color.RED
+                    # 繼續進入下一個 while 檢查 great parent node
+                    k = k.parent.parent
 
-        if key < node.data:
-            node.left = self.insert(node.left, key)
-            # 指定 parent node
-            node.left.parent = node
-        elif key > node.data:
-            node.right = self.insert(node.right, key)
-            # 指定 parent node
-            node.right.parent = node
+                # uncle is Black
+                else:
+                    # case 3.2.1
+                    if k == k.parent.right:
+                        k.parent.color = Color.BLACK
+                        k.parent.parent.color = Color.RED
+                        self.left_rotate(k.parent.parent)
+                    # case 3.2.2
+                    elif k == k.parent.left:
+                        k = k.parent
+                        self.right_rotate(k)
+                        k.parent.color = Color.BLACK
+                        k.parent.parent.color = Color.RED
+                        self.left_rotate(k.parent.parent)
 
-        # Update height
-        node.height = self.nodeHeight(node)
+            # P is left child of G
+            else:
+                u = k.parent.parent.right  # uncle node
 
-        return node
+                # uncle is red
+                # case 3.1 re-color
+                if u.color == Color.RED:
+                    u.color = Color.BLACK
+                    k.parent.color = Color.BLACK
+                    k.parent.parent.color = Color.RED
+                    # 繼續進入下一個 while 檢查 great parent node
+                    k = k.parent.parent
+
+                # uncle is black
+                else:
+                    # case 3.2.1
+                    if k == k.parent.right:
+                        k.parent.color = Color.BLACK
+                        k.parent.parent.color = Color.RED
+                        self.left_rotate(k.parent.parent)
+
+            # 如果 k 為 root node, 則離開迴圈
+            if k == self.root:
+                break
+
+        # end while loop
+
+        self.root.color = Color.BLACK
+
+    def insert(self, key):
+
+        # 設定新節點
+        newNode = Node(key)
+        newNode.color = Color.RED
+        newNode.parent = None
+        newNode.left = self.leafnode
+        newNode.right = self.leafnode
+
+        tmpNode = self.root
+
+        # 尋找新節點的 parent
+        parentNode = None
+        while tmpNode != self.leafnode:
+            parentNode = tmpNode
+            if key < tmpNode.data:
+                tmpNode = tmpNode.left
+            else:
+                tmpNode = tmpNode.right
+
+        newNode.parent = parentNode
+
+        # parentNode 為 None, 代表第一次執行 insert, 需指定 root
+        if parentNode == None:
+            self.root = newNode
+
+        # mew node 為 root, 設定 color: Black 直接 return
+        if newNode.parent == None:
+            newNode.color = Color.BLACK
+            return
+
+        # 指定新增 node 為 parent node 的 left or right
+        if key < parentNode.data:
+            parentNode.left = newNode
+        elif key > parentNode.data:
+            parentNode.right = newNode
+
+        # 至少要有 3 個 node 再進行 fix
+        if newNode.parent.parent == None:
+            return
+
+        # Fix the tree
+        self.__fix_insert(newNode)
 
 
 if __name__ == '__main__':
 
     rb_tree = RedBlackTree()
-    rb_tree.root = rb_tree.insert(rb_tree.root, 10)
-    rb_tree.root = rb_tree.insert(rb_tree.root, 20)
 
-    print(f'root: {rb_tree.root.data}')
+    rb_tree.insert(10)
+    rb_tree.insert(10)
 
     rb_tree.pretty_print()

@@ -192,25 +192,52 @@ class RedBlackTree():
         return pl
 
     def LRRotation(self, p):
+        # 小值
         pl = p.left
+
         # 中間值
         plr = pl.right
 
-        # 中間值的左子樹放小的右邊
+        # 中間值的左子樹放小值: pl 的右邊
         pl.right = plr.left
-        # 中間值的右子樹放大的左邊
-        p.left = plr.right
+        if plr.left != self.leafnode:
+            plr.left.parent = pl
 
-        # 中間值往上拉,小的放左邊,大的放右邊
+        # 中間值的右子樹放大值: p的左邊
+        p.left = plr.right
+        if plr.right != self.leafnode:
+            plr.right.parent = p
+
+        # 中間值往上拉
+        plr.parent = p.parent
+        if p.parent.left == p:
+            p.parent.left = plr
+        else:
+            p.parent.right = plr
+
+        # 小的放左邊
         plr.left = pl
+        pl.parent = plr
+
+        # 大的放右邊
         plr.right = p
+        p.parent = plr
 
         # 有異動子樹的 Node 都需重新計算高度
         # 需注意：在下層的 node 需先計算高度
         pl.height = self.nodeHeight(pl)
         p.height = self.nodeHeight(p)
         plr.height = self.nodeHeight(plr)
+        plr.parent.height = self.nodeHeight(plr.parent)
 
+        # 中間值需變為 black
+        plr.color = Color.BLACK
+
+        # 小值及大值變為 red
+        pl.color = Color.RED
+        p.right.color = Color.RED
+
+        # 原本的 p 是 root 的話需替換成 plr
         if self.root == p:
             self.root = plr
 
@@ -235,10 +262,8 @@ class RedBlackTree():
         pr.parent = p.parent
 
         if p == p.parent.left:
-
             p.parent.left = pr
         else:
-
             p.parent.right = pr
 
         # 小的放左邊
@@ -349,24 +374,28 @@ class RedBlackTree():
 
             # rotate
             elif parentNode.color == Color.RED and uncleNode.color == Color.BLACK:
+                """
+                    用 grantParent、parent、n 執行 Balance Factor 檢核,
+                    看是否需進行 rotate
+                """
                 bf_grant_parent = self.balanceFactor(grantParentNode)
                 bf_parent = self.balanceFactor(parentNode)
 
-                # 用 3 個 Node 執行 Balance Factor 檢核
+                """
+                    以下為符合 rotate 的條件,傳入 grantParentNode 進行 rotate,    
+                    最後將 n 指向回傳的的中間值 node(因為中間值往上拉), 
+                    繼續下一個 loop 檢核
+                """
                 if bf_grant_parent == 2 and bf_parent == 1:
-                    # 將 n 指向中間值的 node(因為中間值往上拉) 繼續下一個 loop 檢核
                     n = self.LLRotation(grantParentNode)
 
                 elif bf_grant_parent == 2 and bf_parent == -1:
-                    # 將 n 指向中間值的 node(因為中間值往上拉) 繼續下一個 loop 檢核
                     n = self.LRRotation(grantParentNode)
 
                 elif bf_grant_parent == -2 and bf_parent == -1:
-                    # 將 n 指向中間值的 node(因為中間值往上拉) 繼續下一個 loop 檢核
                     n = self.RRRotation(grantParentNode)
 
                 elif bf_grant_parent == -2 and bf_parent == 1:
-                    # 將 n 指向中間值的 node(因為中間值往上拉) 繼續下一個 loop 檢核
                     n = self.RLRotation(grantParentNode)
 
             if n == self.root:

@@ -173,19 +173,53 @@ class RedBlackTree():
             return hR + 1
 
     def LLRotation(self, p):
+        # 中間值
         pl = p.left
+
+        # 中間值的右子樹
         plr = pl.right
 
-        # 中間值往上拉,小的放左邊,大的放右邊
-        pl.right = p
         # 中間值的右子樹放在大值的左子樹
         p.left = plr
+        if plr != self.leafnode:
+            plr.parent = p
+
+        # 中間值往上拉
+        pl.parent = p.parent
+
+        if p.parent != None:
+            if p.parent.left == p:
+                p.parent.left = pl
+            else:
+                p.parent.right = pl
+
+        # 小的放左邊(小值原本就在 pl 的左邊,所以不進行任何操作)
+
+        # 大的放右邊
+        pl.right = p
+        p.parent = pl
 
         # 有異動子樹的 Node 需重新計算高度
         # 需注意：因為 p 是在 pl 的子樹需先計算 p 的高度，再計算 pl 的高度
         p.height = self.nodeHeight(p)
         pl.height = self.nodeHeight(pl)
 
+        # parent 的高度需 loop 上去更新
+        tmpParent = pl.parent
+        while tmpParent != None:
+            tmpParent.height = self.nodeHeight(tmpParent)
+            tmpParent = tmpParent.parent
+
+        # 中間值需變為 black
+        pl.color = Color.BLACK
+
+        # 小值及大值變為 red
+        if pl != self.leafnode:
+            pl.left.color = Color.RED
+        if p != self.leafnode:
+            p.right.color = Color.RED
+
+        # 原本的 p 是 root 的話需替換成 pl
         if self.root == p:
             self.root = pl
 
@@ -210,10 +244,12 @@ class RedBlackTree():
 
         # 中間值往上拉
         plr.parent = p.parent
-        if p.parent.left == p:
-            p.parent.left = plr
-        else:
-            p.parent.right = plr
+
+        if p.parent != None:
+            if p.parent.left == p:
+                p.parent.left = plr
+            else:
+                p.parent.right = plr
 
         # 小的放左邊
         plr.left = pl
@@ -228,14 +264,21 @@ class RedBlackTree():
         pl.height = self.nodeHeight(pl)
         p.height = self.nodeHeight(p)
         plr.height = self.nodeHeight(plr)
-        plr.parent.height = self.nodeHeight(plr.parent)
+
+        # parent 的高度需 loop 上去更新
+        tmpParent = plr.parent
+        while tmpParent != None:
+            tmpParent.height = self.nodeHeight(tmpParent)
+            tmpParent = tmpParent.parent
 
         # 中間值需變為 black
         plr.color = Color.BLACK
 
         # 小值及大值變為 red
-        pl.color = Color.RED
-        p.right.color = Color.RED
+        if pl != self.leafnode:
+            pl.color = Color.RED
+        if p != self.leafnode:
+            p.right.color = Color.RED
 
         # 原本的 p 是 root 的話需替換成 plr
         if self.root == p:
@@ -255,16 +298,16 @@ class RedBlackTree():
         p.right = prl
 
         if prl != self.leafnode:
-
             prl.parent = p
 
         # 中間值往上拉
         pr.parent = p.parent
 
-        if p == p.parent.left:
-            p.parent.left = pr
-        else:
-            p.parent.right = pr
+        if p.parent != None:
+            if p == p.parent.left:
+                p.parent.left = pr
+            else:
+                p.parent.right = pr
 
         # 小的放左邊
         pr.left = p
@@ -280,14 +323,20 @@ class RedBlackTree():
 
         pr.height = self.nodeHeight(pr)
 
-        pr.parent.height = self.nodeHeight(pr.parent)
+        # parent 的高度需 loop 上去更新
+        tmpParent = pr.parent
+        while tmpParent != None:
+            tmpParent.height = self.nodeHeight(tmpParent)
+            tmpParent = tmpParent.parent
 
         # 中間值需變為 black
         pr.color = Color.BLACK
 
         # 小值及大值變為 red
-        p.color = Color.RED
-        pr.right.color = Color.RED
+        if p != self.leafnode:
+            p.color = Color.RED
+        if pr != self.leafnode:
+            pr.right.color = Color.RED
 
         # 原本的 p 是 root 的話需替換成 pr
         if self.root == p:
@@ -313,10 +362,12 @@ class RedBlackTree():
 
         # 中間值:pr 往上拉
         prl.parent = p.parent
-        if p == p.parent.left:
-            p.parent.left = prl
-        else:
-            p.parent.right = prl
+
+        if p.parent != None:
+            if p == p.parent.left:
+                p.parent.left = prl
+            else:
+                p.parent.right = prl
 
         # 小值放左邊
         prl.left = p
@@ -331,14 +382,21 @@ class RedBlackTree():
         pr.height = self.nodeHeight(pr)
         p.height = self.nodeHeight(p)
         prl.height = self.nodeHeight(prl)
-        prl.parent.height = self.nodeHeight(prl.parent)
+
+        # parent 的高度需 loop 上去更新
+        tmpParent = prl.parent
+        while tmpParent != None:
+            tmpParent.height = self.nodeHeight(tmpParent)
+            tmpParent = tmpParent.parent
 
         # 中間值需變為 black
         prl.color = Color.BLACK
 
         # 小值及大值變為 red
-        p.color = Color.RED
-        pr.color = Color.RED
+        if p != self.leafnode:
+            p.color = Color.RED
+        if pr != self.leafnode:
+            pr.color = Color.RED
 
         # 原本的 p 是 root 的話需替換成 prl
         if self.root == p:
@@ -352,7 +410,7 @@ class RedBlackTree():
         return n
 
     def __fix_insert2(self, n):
-        while n.parent.color == Color.RED:
+        while n.parent.color == Color.RED and n.color == Color.RED:
             parentNode = self.noneToLeaf(n.parent)
 
             grantParentNode = self.noneToLeaf(parentNode.parent)
@@ -375,7 +433,7 @@ class RedBlackTree():
             # rotate
             elif parentNode.color == Color.RED and uncleNode.color == Color.BLACK:
                 """
-                    用 grantParent、parent、n 執行 Balance Factor 檢核,
+                    用 grantParent、parent node 執行 Balance Factor 檢核,
                     看是否需進行 rotate
                 """
                 bf_grant_parent = self.balanceFactor(grantParentNode)
@@ -386,16 +444,16 @@ class RedBlackTree():
                     最後將 n 指向回傳的的中間值 node(因為中間值往上拉), 
                     繼續下一個 loop 檢核
                 """
-                if bf_grant_parent == 2 and bf_parent == 1:
+                if bf_grant_parent >= 2 and bf_parent >= 1:
                     n = self.LLRotation(grantParentNode)
 
-                elif bf_grant_parent == 2 and bf_parent == -1:
+                elif bf_grant_parent >= 2 and bf_parent <= -1:
                     n = self.LRRotation(grantParentNode)
 
-                elif bf_grant_parent == -2 and bf_parent == -1:
+                elif bf_grant_parent <= -2 and bf_parent <= -1:
                     n = self.RRRotation(grantParentNode)
 
-                elif bf_grant_parent == -2 and bf_parent == 1:
+                elif bf_grant_parent <= -2 and bf_parent >= 1:
                     n = self.RLRotation(grantParentNode)
 
             if n == self.root:
@@ -523,10 +581,15 @@ if __name__ == '__main__':
 
     rb_tree = RedBlackTree()
 
-    rb_tree.insert(61)
-    rb_tree.insert(52)
-    rb_tree.insert(85)
-    rb_tree.insert(93)
-    rb_tree.insert(87)
+    rb_tree.insert(10)
+    rb_tree.insert(20)
+    rb_tree.insert(30)
+    rb_tree.insert(50)
+    rb_tree.insert(40)
+    rb_tree.insert(60)
+    rb_tree.insert(70)
+    rb_tree.insert(80)
+    rb_tree.insert(4)
+    # rb_tree.insert(8)
 
     rb_tree.pretty_print()

@@ -214,9 +214,9 @@ class RedBlackTree():
         pl.color = Color.BLACK
 
         # 小值及大值變為 red
-        if pl != self.leafnode:
+        if pl.left != self.leafnode:
             pl.left.color = Color.RED
-        if p != self.leafnode:
+        if p.right != self.leafnode:
             p.right.color = Color.RED
 
         # 原本的 p 是 root 的話需替換成 pl
@@ -277,7 +277,7 @@ class RedBlackTree():
         # 小值及大值變為 red
         if pl != self.leafnode:
             pl.color = Color.RED
-        if p != self.leafnode:
+        if p.right != self.leafnode:
             p.right.color = Color.RED
 
         # 原本的 p 是 root 的話需替換成 plr
@@ -335,7 +335,7 @@ class RedBlackTree():
         # 小值及大值變為 red
         if p != self.leafnode:
             p.color = Color.RED
-        if pr != self.leafnode:
+        if pr.right != self.leafnode:
             pr.right.color = Color.RED
 
         # 原本的 p 是 root 的話需替換成 pr
@@ -590,6 +590,6 @@ if __name__ == '__main__':
     rb_tree.insert(70)
     rb_tree.insert(80)
     rb_tree.insert(4)
-    # rb_tree.insert(8)
+    rb_tree.insert(8)
 
     rb_tree.pretty_print()

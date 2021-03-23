@@ -258,23 +258,23 @@ class RedBlackTree():
         # 中間值的右子樹放在大值的左子樹
         p.left = plr
         if plr != self.leafnode:
-            # 中間值右子樹的第一個 node 進行 re-color
+            # 中間值右邊的第一個 node 進行 re-color
             if plr.color == Color.RED:
                 plr.color = Color.BLACK
             else:
                 plr.color = Color.RED
             plr.parent = p
 
-        # 中間值右子樹的第一個 node 與 children 有 red-red conflict
+        # 檢查中間值右邊的第一個 node 與 children 是否有 red-red conflict
         if plr.color == Color.RED:
             if plr.left.color == Color.RED:
-                # 重新指定大值的 node
+                # 用 insert 方式的修正並重新指定大值的 node
                 p = self.__fix_insert2(plr.left)
             elif plr.right.color == Color.RED:
-                # 重新指定大值的 node
+                # 用 insert 方式的修正並重新指定大值的 node
                 p = self.__fix_insert2(plr.right)
 
-        # 大值放右邊
+        # 等大值: p 重新指定後再放右邊
         pl.right = p
         p.parent = pl
 
@@ -350,6 +350,48 @@ class RedBlackTree():
             self.root = plr
 
         return plr
+
+    def DEL_LRRotation(self, p):
+        # 小值
+        pl = p.left
+
+        # 中間值
+        plr = pl.right
+
+        # 中間值的左子樹
+        plrl = plr.left
+
+        # 中間值往上拉
+        plr.parent = p.parent
+        if p.parent != None:
+            if p.parent.left == p:
+                p.parent.left = plr
+            else:
+                p.parent.right = plr
+
+        # 中間值的左子樹放小值: pl 的右邊
+        pl.right = plrl
+
+        # 對中間值左子樹的第一個 node 進行 re-color
+        if plrl != self.leafnode:
+            if plrl.color == Color.RED:
+                plrl.color = Color.BLACK
+            else:
+                plrl.color = Color.RED
+            plrl.parent = pl
+
+        # 檢查中間值左子樹的第一個 node 與其 children 是否有 red-red conflict
+        if plrl.color == Color.RED:
+            if plrl.left.color == Color.RED:
+                # 重新指定小值: pl 的 node
+                pl = self.__fix_insert2(plrl.left)
+            elif plrl.right.color == Color.RED:
+                # 重新指定小值: pl 的 node
+                pl = self.__fix_insert2(plrl.right)
+
+         # 等小值: pl 重新指定後再放左邊
+        plr.left = pl
+        pl.parent = plr
 
     def RRRotation(self, p):
 

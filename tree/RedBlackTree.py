@@ -1,6 +1,6 @@
 import sys
 from enum import Enum
-from typing import TypeVar, Generic
+from typing import Counter, TypeVar, Generic
 
 T = TypeVar("T")
 
@@ -115,6 +115,153 @@ class RedBlackTree:
         pr.left = p
         p.parent = pr
 
+    def search(self, key):
+        current = self.root
+        while current != self.leafnode and key != current.key:
+            if key < current.key:
+                current = current.left
+            else:
+                current = current.right
+
+        return current
+
+    """ current is left child fix case """
+
+    def __fix_delete_case1(self, current):
+        sibling = current.parent.right
+        # case1. sibling is red
+        if sibling.color == Color.RED:
+            sibling.color = Color.BLACK
+            current.parent.color = Color.RED
+            self.left_rotate(current.parent)
+            sibling = current.parent.right
+
+        # 進入 Case2、3、4: sibling 是黑色
+
+        # Case2: sibling的兩個child都是黑色
+        if sibling.left.color == Color.BLACK and sibling.right.color == Color.BLACK:
+            sibling.color = Color.RED
+            current = current.parent
+        # Case3 & 4: current只有其中一個child是黑色
+        else:
+            # case3: sibling的right child是黑的, left child是紅色
+            if sibling.right.color == Color.BLACK:
+                sibling.left.color = Color.BLACK
+                sibling.color = Color.RED
+                self.right_rotate(sibling)
+                sibling = current.parent.right
+
+            # 經過Case3後, 一定會變成Case4
+            # Case 4: sibling的right child 是紅色的, left child是黑色
+            sibling.color = current.parent.color
+            current.parent.color = Color.BLACK
+            sibling.right.color = Color.BLACK
+            self.left_rotate(current.parent)
+            current = self.root  # 將current移動到 root, 一定跳出迴圈
+
+        return current
+
+    """ current is right child fix case """
+
+    def __fix_delete_case2(self, current):
+        sibling = current.parent.left
+        # case1. sibling is red
+        if sibling.color == Color.RED:
+            sibling.color = Color.BLACK
+            current.parent.color = Color.RED
+            self.right_rotate(current.parent)
+            sibling = current.parent.left
+
+        # 進入 Case2、3、4: sibling 是黑色
+
+        # Case2: sibling的兩個child都是黑色
+        if sibling.left.color == Color.BLACK and sibling.right.color == Color.BLACK:
+            sibling.color = Color.RED
+            current = current.parent
+        # Case3 & 4: current只有其中一個child是黑色
+        else:
+            # case3: sibling 的 left child是黑的, right child是紅色
+            if sibling.left.color == Color.BLACK:
+                sibling.right.color = Color.BLACK
+                sibling.color = Color.RED
+                self.left_rotate(sibling)
+                sibling = current.parent.left
+
+            # 經過Case3後, 一定會變成Case4
+            # Case 4: sibling 的 left child 是紅色的, right child是黑色
+            sibling.color = current.parent.color
+            current.parent.color = Color.BLACK
+            sibling.left.color = Color.BLACK
+            self.right_rotate(current.parent)
+            current = self.root  # 將current移動到 root, 一定跳出迴圈
+
+        return current
+
+    def __fix_delete(self, current):
+        # current.color 是 red, 直接塗黑
+        # current 是 root, 直接塗黑
+
+        while current != self.root and current.color == Color.BLACK:
+            # current is left child
+            if current == current.parent.left:
+                current = self.__fix_delete_case1(current)
+            # current is right child
+            else:
+                current = self.__fix_delete_case2(current)
+
+        current.color = Color.BLACK
+
+    """ 尋找右子樹最小值"""
+
+    def getRightSubTreeMinNode(self, curretNode):
+        if curretNode.right != self.leafnode:
+            curretNode = curretNode.right
+            while curretNode.left != self.leafnode:
+                curretNode = curretNode.left
+
+        return curretNode
+
+    def delete(self, key):
+        delete_node = self.search(key)
+
+        if delete_node == self.leafnode:
+            print(f"the key:{key} not found!!")
+            return
+
+        node_y = self.leafnode  # 真正被刪除的 node
+
+        node_x = self.leafnode  # 真正被刪除 node 的 child
+
+        if delete_node.left == self.leafnode or delete_node.right == self.leafnode:
+            node_y = delete_node
+        else:
+            node_y = self.getRightSubTreeMinNode(
+                delete_node
+            )  # node_y 為 delete_node 右子樹的最大值
+
+        if node_y.left != self.leafnode:
+            node_x = node_y.left
+        else:
+            node_x = node_y.right
+
+        # 將 node_x 取代 node_y
+        node_x.parent = node_y.parent
+        if node_y.parent == self.leafnode:  # 如果 node_y 原本為 root, 則 node_x 指定為 root
+            self.root = node_x
+        elif node_y == node_y.parent.left:
+            node_y.parent.left = node_x
+        else:
+            node_y.parent.right = node_x
+
+        # node_y 的值去取代 delete_node 的值
+        if node_y != delete_node:
+            delete_node.key = node_y.key
+            delete_node.element = node_y.element
+
+        # 若刪除的node是黑色, 要從x進行修正, 以符合RBT的顏色規則
+        if node_y.color == Color.BLACK:
+            self.__fix_delete(node_x)
+
     def __fix_insert_case1(self, current):
         uncle = current.parent.parent.right
         # case1: 若uncle是紅色
@@ -176,6 +323,12 @@ class RedBlackTree:
 
     def insert(self, key, element: T):
 
+        newNode = self.search(key)
+
+        if newNode.key == key:
+            print(f"the key: {key} has already inserted!!")
+            return
+
         # 設定新節點
         newNode = Node(key, element)
         newNode.color = Color.RED
@@ -216,20 +369,26 @@ class RedBlackTree:
 
 if __name__ == "__main__":
 
-    newNode = Node("1", "0981253679")
-
-    print(f"element:{newNode.element}")
-
     bst = RedBlackTree()
 
-    bst.insert(50, "J")
-    bst.insert(20, "T")
-    bst.insert(70, "P")
-    bst.insert(10, "I")
-    bst.insert(40, "A")
-    bst.insert(60, "Q")
-    bst.insert(80, "L")
-    bst.insert(30, "C")
-    bst.insert(75, "D")
+    bst.insert(70, "J")
+    bst.insert(40, "T")
+    bst.insert(100, "P")
+    bst.insert(20, "I")
+    bst.insert(50, "A")
+    bst.insert(80, "Q")
+    bst.insert(110, "L")
+    bst.insert(10, "C")
+    bst.insert(30, "D")
+    bst.insert(90, "A")
+    bst.insert(120, "G")
 
+    bst.pretty_print()
+
+    bst.delete(100)
+    print(f"after delete:")
+    bst.pretty_print()
+
+    bst.delete(70)
+    print(f"after delete:")
     bst.pretty_print()

@@ -38,6 +38,18 @@ class BinaryTree():
             self.postOrder(currentNode.left) # L
             self.postOrder(currentNode.right) # R
             sys.stdout.write(currentNode.key + " ") # V
+            
+    def preOrder(self, currentNode):
+        if currentNode is not None:
+               sys.stdout.write(currentNode.key + "") # V
+               self.preOrder(currentNode.left) # L
+               self.preOrder(currentNode.right) # R 
+
+    def inOrder(self, currentNode):
+        if currentNode is not None:
+            self.inOrder(currentNode.left) # L
+            sys.stdout.write(currentNode.key)  # V
+            self.inOrder(currentNode.right) # R
 
 if __name__ == "__main__":
 
@@ -66,4 +78,10 @@ if __name__ == "__main__":
 
     bt = BinaryTree(nodeA)
 
-    bt.postOrder(nodeA)
+     # bt.postOrder(nodeA)
+
+    # bt.preOrder(nodeA)
+
+    bt.inOrder(nodeA)
+    
+    

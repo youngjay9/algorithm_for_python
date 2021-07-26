@@ -37,19 +37,42 @@ class BinaryTree():
         if currentNode is not None:
             self.postOrder(currentNode.left) # L
             self.postOrder(currentNode.right) # R
-            sys.stdout.write(currentNode.key + " ") # V
+            print(currentNode.key + " ") # V
             
     def preOrder(self, currentNode):
         if currentNode is not None:
-               sys.stdout.write(currentNode.key + "") # V
+               print(currentNode.key + "") # V
                self.preOrder(currentNode.left) # L
                self.preOrder(currentNode.right) # R 
 
     def inOrder(self, currentNode):
         if currentNode is not None:
             self.inOrder(currentNode.left) # L
-            sys.stdout.write(currentNode.key)  # V
+            print(currentNode.key)  # V
             self.inOrder(currentNode.right) # R
+
+    def leftMost(self,currentNode):
+        if currentNode is None:
+            return currentNode
+
+        while currentNode.left is not None:
+            currentNode = currentNode.left
+
+        return currentNode     
+
+    def inOrderSuccessor(self, currentNode):
+        if currentNode is None:
+            return currentNode
+
+        if currentNode.right is not None:
+            successorNode = self.leftMost(currentNode.right)
+        else:
+            successorNode = currentNode.parent
+            while successorNode is not None and successorNode.right == currentNode:
+                currentNode = currentNode.parent
+                successorNode = currentNode.parent
+
+        return successorNode
 
 if __name__ == "__main__":
 
@@ -65,16 +88,24 @@ if __name__ == "__main__":
     
     nodeA.left = nodeB
     nodeA.right = nodeC
+    nodeB.parent = nodeA
+    nodeC.parent = nodeA
          
     nodeB.left = nodeD
     nodeB.right = nodeE
+    nodeD.parent = nodeB
+    nodeE.parent = nodeB
 
     nodeC.left = nodeF
+    nodeF.parent = nodeC
 
     nodeE.left = nodeG
     nodeE.right = nodeH
+    nodeG.parent = nodeE
+    nodeH.parent = nodeE
 
     nodeF.right = nodeI
+    nodeI.parent = nodeF
 
     bt = BinaryTree(nodeA)
 
@@ -83,5 +114,9 @@ if __name__ == "__main__":
     # bt.preOrder(nodeA)
 
     bt.inOrder(nodeA)
+
+    inOrderSuccessor = bt.inOrderSuccessor(nodeA)
+
+    print(f"inOrderSuccessor of nodeH:{inOrderSuccessor.key}")
     
     

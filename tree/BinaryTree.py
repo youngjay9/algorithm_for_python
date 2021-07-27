@@ -72,7 +72,30 @@ class BinaryTree():
                 currentNode = currentNode.parent
                 successorNode = currentNode.parent
 
-        return successorNode
+        return 
+        
+    def rightMost(self, currentNode):
+        if currentNode is None:
+            return currentNode
+
+        while currentNode.right is not None:
+            currentNode = currentNode.right
+
+        return currentNode
+
+    def inOrderPredecessor(self, currentNode):
+        if currentNode is None:
+            return currentNode
+
+        if currentNode.left is not None:
+            predecessorNode = self.rightMost(currentNode.left)
+        else:
+            predecessorNode = currentNode.parent
+            while predecessorNode is not None and predecessorNode.left == currentNode:
+                currentNode = currentNode.parent
+                predecessorNode = currentNode.parent    
+
+        return predecessorNode             
 
 if __name__ == "__main__":
 
@@ -117,6 +140,11 @@ if __name__ == "__main__":
 
     inOrderSuccessor = bt.inOrderSuccessor(nodeA)
 
-    print(f"inOrderSuccessor of nodeH:{inOrderSuccessor.key}")
-    
+    if inOrderSuccessor is not None:    
+        print(f"inOrderSuccessor of nodeH:{inOrderSuccessor.key}")
+
+    inOrderPrecessor = bt.inOrderPredecessor(nodeF)
+
+    if inOrderPrecessor is not None:
+        print(f"inOrderPrecessor of nodeA:{inOrderPrecessor.key}")    
     

@@ -1,4 +1,4 @@
-import sys
+import sys, queue, json
 from enum import Enum
 from types import LambdaType
 from typing import Counter, TypeVar, Generic
@@ -50,6 +50,24 @@ class BinaryTree():
             self.inOrder(currentNode.left) # L
             print(currentNode.key)  # V
             self.inOrder(currentNode.right) # R
+
+    def levelOrder(self, currentNode):
+        q = queue.Queue() # 可用於多執行緒的 Queue
+        q.put(currentNode)
+
+        while not q.empty():
+            
+            item = q.get()
+            print(f'{item.key} ') # visiting
+
+            if item.left is not None:
+                q.put(item.left)
+            
+            if item.right is not None:
+                q.put(item.right)
+            
+
+
 
     def leftMost(self,currentNode):
         if currentNode is None:
@@ -136,15 +154,16 @@ if __name__ == "__main__":
 
     # bt.preOrder(nodeA)
 
-    bt.inOrder(nodeA)
+    # bt.inOrder(nodeA)
 
-    inOrderSuccessor = bt.inOrderSuccessor(nodeA)
+    # inOrderSuccessor = bt.inOrderSuccessor(nodeA)
 
-    if inOrderSuccessor is not None:    
-        print(f"inOrderSuccessor of nodeH:{inOrderSuccessor.key}")
+    # if inOrderSuccessor is not None:    
+    #     print(f"inOrderSuccessor :{inOrderSuccessor.key}")
 
-    inOrderPrecessor = bt.inOrderPredecessor(nodeF)
+    # inOrderPrecessor = bt.inOrderPredecessor(nodeF)
 
-    if inOrderPrecessor is not None:
-        print(f"inOrderPrecessor of nodeA:{inOrderPrecessor.key}")    
+    # if inOrderPrecessor is not None:
+    #     print(f"inOrderPrecessor :{inOrderPrecessor.key}")    
     
+    bt.levelOrder(nodeA)

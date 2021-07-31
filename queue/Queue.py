@@ -60,6 +60,6 @@ print(f"queue display: {queue.display()}")
 
 print(f"dequeue: {queue.deQuque()}")
 print(f"dequeue: {queue.deQuque()}")
-print(f"dequeue: {queue.deQuque()}")
+print(f"dequeue: {queue.deQuque()}")    
 print(f"dequeue: {queue.deQuque()}")
 print(f"dequeue: {queue.deQuque()}")

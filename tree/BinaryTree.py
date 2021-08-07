@@ -29,10 +29,9 @@ class BinaryTree():
         self.leafnode = LeafNode()  # 為節省記憶體空間,提供其它 node 預設的 leafNode 都指向同一個
         self.root = self.leafnode
         self.root.parent = self.leafnode
+        self.insertLength = 0
 
-    def __init__(self, rootNode):
-        self.root = rootNode    
-
+    
     def postOrder(self, currentNode):
         if currentNode is not None:
             self.postOrder(currentNode.left) # L
@@ -66,9 +65,6 @@ class BinaryTree():
             if item.right is not None:
                 q.put(item.right)
             
-
-
-
     def leftMost(self,currentNode):
         if currentNode is None:
             return currentNode
@@ -113,7 +109,52 @@ class BinaryTree():
                 currentNode = currentNode.parent
                 predecessorNode = currentNode.parent    
 
-        return predecessorNode             
+        return predecessorNode
+
+    def getNextInsertElement(self, str):
+        print(f'insert len:{self.insertLength} len: {len(str)}')
+        if self.insertLength == len(str) -1:
+            return None
+
+        self.insertLength = self.insertLength +1
+        data = str[self.insertLength]
+
+        return data
+
+    def createTree(self, str):
+
+        q = queue.Queue() # 可用於多執行緒的 Queue
+        
+        self.root = Node(str[self.insertLength], str[self.insertLength])
+
+        self.insertLength = self.insertLength +1
+        data = str[self.insertLength]
+
+        currentNode = self.root    
+
+        # 使用 levelOrder 的方式建立
+        while data is not None:
+            if data != 'x': # current的leftchild
+                newNode = Node(data, data)
+                newNode.parent = currentNode
+                currentNode.left = newNode
+                q.put(newNode)
+
+            data = self.getNextInsertElement(str)
+
+            if data != 'x': # current的rightchild
+                newNode = Node(data, data)
+                newNode.parent = currentNode
+                currentNode.right = newNode
+                q.put(newNode)
+
+            currentNode = q.get()
+
+            data = self.getNextInsertElement(str)
+
+
+
+                          
 
 if __name__ == "__main__":
 
@@ -148,7 +189,7 @@ if __name__ == "__main__":
     nodeF.right = nodeI
     nodeI.parent = nodeF
 
-    bt = BinaryTree(nodeA)
+    # bt = BinaryTree(nodeA)
 
      # bt.postOrder(nodeA)
 
@@ -166,4 +207,11 @@ if __name__ == "__main__":
     # if inOrderPrecessor is not None:
     #     print(f"inOrderPrecessor :{inOrderPrecessor.key}")    
     
-    bt.levelOrder(nodeA)
+    # bt.levelOrder(nodeA)
+   
+    # insert 的字串
+    str = "ABCDEFxxxGHxI"
+    bt = BinaryTree()
+    bt.createTree(str)
+
+    bt.levelOrder(bt.root)

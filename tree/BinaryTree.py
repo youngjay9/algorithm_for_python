@@ -111,8 +111,10 @@ class BinaryTree():
 
         return predecessorNode
 
+    
     def getNextInsertElement(self, str):
         print(f'insert len:{self.insertLength} len: {len(str)}')
+        # 用 insertLength 控管 index 到哪個字元, 避免超過字串長度
         if self.insertLength == len(str) -1:
             return None
 
@@ -121,20 +123,30 @@ class BinaryTree():
 
         return data
 
+    """ 使用 level order 搭配 Queue 的方式建立 Tree """
     def createTree(self, str):
 
         q = queue.Queue() # 可用於多執行緒的 Queue
         
+        # 讀取新增元素的第一個字元為 root node
         self.root = Node(str[self.insertLength], str[self.insertLength])
 
+        # 再讀取新增元素的第二個字元
         self.insertLength = self.insertLength +1
         data = str[self.insertLength]
 
+        # 用 currentNode 指向目前的 node
         currentNode = self.root    
 
-        # 使用 levelOrder 的方式建立
+        # 以下使用 levelOrder 的方式建立 tree
         while data is not None:
-            if data != 'x': # current的leftchild
+            """ 
+                因為是 Binary tree, 在迴圈中需一次讀取 2 個新增元素(getNextInsertElement),
+                一個給 left, 一個給 right
+            """    
+
+            # current的leftchild
+            if data != 'x':
                 newNode = Node(data, data)
                 newNode.parent = currentNode
                 currentNode.left = newNode
@@ -142,7 +154,8 @@ class BinaryTree():
 
             data = self.getNextInsertElement(str)
 
-            if data != 'x': # current的rightchild
+            # current的rightchild    
+            if data != 'x': 
                 newNode = Node(data, data)
                 newNode.parent = currentNode
                 currentNode.right = newNode
@@ -209,7 +222,7 @@ if __name__ == "__main__":
     
     # bt.levelOrder(nodeA)
    
-    # insert 的字串
+    # insert 的字串(x 代表不新增,跳過)
     str = "ABCDEFxxxGHxI"
     bt = BinaryTree()
     bt.createTree(str)

@@ -53,6 +53,7 @@ class BinaryTree():
             print(currentNode.key)  # V
             self.inOrder(currentNode.right) # R
 
+    """ 參考 algorithm_datastructure/2_BinaryTree_Traversal """
     def levelOrder(self, currentNode):
         q = queue.Queue() # 可用於多執行緒的 Queue
         q.put(currentNode)
@@ -62,6 +63,7 @@ class BinaryTree():
             item = q.get()
             print(f'{item.key} ') # visiting
 
+            # 因為每個 node 有 left 跟 right child, 所以要 if 兩次檢查    
             if item.left is not None:
                 q.put(item.left)
             
@@ -77,6 +79,7 @@ class BinaryTree():
 
         return currentNode     
 
+    """ 參考 algorithm_datastructure/2_BinaryTree_Traversal """
     def inOrderSuccessor(self, currentNode):
         if currentNode is None:
             return currentNode
@@ -100,6 +103,7 @@ class BinaryTree():
 
         return currentNode
 
+    """ 參考 algorithm_datastructure/2_BinaryTree_Traversal """
     def inOrderPredecessor(self, currentNode):
         if currentNode is None:
             return currentNode
@@ -118,55 +122,57 @@ class BinaryTree():
     def getNextInsertElement(self, str):
         print(f'insert len:{self.insertLength} len: {len(str)}')
         # 用 insertLength 控管 index 到哪個字元, 避免超過字串長度
-        if self.insertLength == len(str) -1:
+        if self.insertLength == len(str):
             return None
 
-        self.insertLength = self.insertLength +1
         data = str[self.insertLength]
 
+        self.insertLength = self.insertLength +1
+        
         return data
 
+    
     """ 使用 level order 搭配 Queue 的方式建立 Tree """
     def createTree(self, str):
+        # 用 index 的方式一個一個取元素
+        data = self.getNextInsertElement(str)
 
+        # 指定 root
+        self.root = Node(data, data)
+
+        # 將root先放進 queue
         q = queue.Queue() # 可用於多執行緒的 Queue
-        
-        # 讀取新增元素的第一個字元為 root node
-        self.root = Node(str[self.insertLength], str[self.insertLength])
+        q.put(self.root)
 
-        # 再讀取新增元素的第二個字元
-        self.insertLength = self.insertLength +1
-        data = str[self.insertLength]
+        while not q.empty() and data is not None:
+            
+            currentNode = q.get()
 
-        # 用 currentNode 指向目前的 node
-        currentNode = self.root    
-
-        # 以下使用 levelOrder 的方式建立 tree
-        while data is not None:
             """ 
                 因為是 Binary tree, 在迴圈中需一次讀取 2 個新增元素(getNextInsertElement),
                 一個給 left, 一個給 right
-            """    
-
+            """
             # current的leftchild
+            data = self.getNextInsertElement(str)
+            if data is None:
+                continue
             if data != 'x':
                 newNode = Node(data, data)
                 newNode.parent = currentNode
                 currentNode.left = newNode
                 q.put(newNode)
 
+            # current的rightchild  
             data = self.getNextInsertElement(str)
-
-            # current的rightchild    
+            if data is None:
+                continue
             if data != 'x': 
                 newNode = Node(data, data)
                 newNode.parent = currentNode
                 currentNode.right = newNode
                 q.put(newNode)
 
-            currentNode = q.get()
-
-            data = self.getNextInsertElement(str)
+            
 
 
 
@@ -174,44 +180,13 @@ class BinaryTree():
 
 if __name__ == "__main__":
 
-    nodeA = Node("A", "A")
-    nodeB = Node("B", "B")
-    nodeC = Node("C", "C")
-    nodeD = Node("D", "D")
-    nodeE = Node("E", "E")
-    nodeF = Node("F", "F")
-    nodeG = Node("G", "G")
-    nodeH = Node("H", "H")
-    nodeI = Node("I", "I")
-    
-    nodeA.left = nodeB
-    nodeA.right = nodeC
-    nodeB.parent = nodeA
-    nodeC.parent = nodeA
-         
-    nodeB.left = nodeD
-    nodeB.right = nodeE
-    nodeD.parent = nodeB
-    nodeE.parent = nodeB
+    # insert 的字串(x 代表不新增,跳過)
+    str = "ABCDEFxxxGHxI"
+    bt = BinaryTree()
+    bt.createTree(str)
 
-    nodeC.left = nodeF
-    nodeF.parent = nodeC
-
-    nodeE.left = nodeG
-    nodeE.right = nodeH
-    nodeG.parent = nodeE
-    nodeH.parent = nodeE
-
-    nodeF.right = nodeI
-    nodeI.parent = nodeF
-
-    # bt = BinaryTree(nodeA)
-
-     # bt.postOrder(nodeA)
-
-    # bt.preOrder(nodeA)
-
-    # bt.inOrder(nodeA)
+    # 使用 level order 列印出 Binarytree 排序後的結果
+    bt.levelOrder(bt.root)
 
     # inOrderSuccessor = bt.inOrderSuccessor(nodeA)
 
@@ -225,9 +200,4 @@ if __name__ == "__main__":
     
     # bt.levelOrder(nodeA)
    
-    # insert 的字串(x 代表不新增,跳過)
-    str = "ABCDEFxxxGHxI"
-    bt = BinaryTree()
-    bt.createTree(str)
-
-    bt.levelOrder(bt.root)
+    

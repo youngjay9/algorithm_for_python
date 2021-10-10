@@ -16,7 +16,9 @@ class BinaryHeap():
         self.heap = {}
         self.heapSize = 0
 
-    
+    '''
+        將 BinaryTree 轉成 MaxHeap
+    '''
     def buildMaxHeap(self, array):
         # 將 insert element 放進 heap ditionary
         for i in range(len(array)):
@@ -33,13 +35,13 @@ class BinaryHeap():
         while count >=0:
             print(f'i: {count}')
             self.maxHeapify(count)
-            count = count -1    
+            count = count -1
 
-        print(self.heap)
- 
-
-
-
+    def display(self):
+        count = 0
+        while count < len(self.heap):
+             print(f'key: {self.heap[count].key}')  
+             count = count + 1 
             
     def maxHeapify(self, i):
         l = i*2 +1
@@ -61,6 +63,19 @@ class BinaryHeap():
             self.heap[largest] = temp
 
             self.maxHeapify(largest)
+
+    def heapSort(self):
+        count = self.heapSize
+
+        print(f'count{count}')
+
+        for i in range(count, -1, -1):
+            # switch
+            temp = self.heap[0]
+            self.heap[0] = self.heap[i]
+            self.heap[i] = temp
+            self.heapSize = self.heapSize -1
+            self.maxHeapify(0)    
 
 
 if __name__ == "__main__":
@@ -101,4 +116,10 @@ if __name__ == "__main__":
 
 
     binaryHeap = BinaryHeap()
+    # 先建置 maxHeap
     binaryHeap.buildMaxHeap(insertElementArray)
+    binaryHeap.display()
+
+    # 接著再執行 heapSort
+    binaryHeap.heapSort()
+    binaryHeap.display()

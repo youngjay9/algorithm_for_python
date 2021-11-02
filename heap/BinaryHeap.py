@@ -70,12 +70,12 @@ class BinaryHeap():
         print(f'count{count}')
 
         for i in range(count, -1, -1):
-            # switch
+            # 將目前第一個 node 與最後一個 node switch
             temp = self.heap[0]
             self.heap[0] = self.heap[i]
             self.heap[i] = temp
             self.heapSize = self.heapSize -1
-            self.maxHeapify(0)    
+            self.maxHeapify(0)  
 
 
 if __name__ == "__main__":

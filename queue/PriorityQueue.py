@@ -30,13 +30,30 @@ class PriorityQueue():
             parentIndx = math.floor((newIndx - 1)/2)
 
             while parentIndx >=0 and self.heap[newIndx].priority > self.heap[parentIndx].priority:
-                tmp = self.heap[parentIndex]
-                self.heap[parentIndex] = self.heap[newIndex]
-                self.heap[newIndex] = tmp
+                tmp = self.heap[parentIndx]
+                self.heap[parentIndx] = self.heap[newIndx]
+                self.heap[newIndx] = tmp
                 # update index number
-                newIndex = parentIndex
-                parentIndex = math.floor((newIndex - 1) / 2);    
+                newIndx = parentIndx
+                parentIndx = math.floor((newIndx - 1) / 2)    
+    
+    def display(self):
+        count = 0
+        for indx in self.heap:
+            print(f'{self.heap[indx].priority}')
 
+
+if __name__ == "__main__":
+                
+    pq = PriorityQueue()
+
+    pq.enQueue(5,'Leanring')
+    pq.enQueue(2,'Sharing')
+    pq.enQueue(7,'Laughing')
+    pq.enQueue(8,'Playing')
+    pq.enQueue(8,'Seeing')
+
+    pq.display()
 
 
 

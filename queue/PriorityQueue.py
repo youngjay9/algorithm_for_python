@@ -35,7 +35,26 @@ class PriorityQueue():
                 self.heap[newIndx] = tmp
                 # update index number
                 newIndx = parentIndx
-                parentIndx = math.floor((newIndx - 1) / 2)    
+                parentIndx = math.floor((newIndx - 1) / 2)
+
+    def deQueue(self):
+        if len(self.heap) == 0:
+            return None
+
+        if len(self.heap) == 1:
+            removedNode = self.heap[self.heapSize]
+            del self.heap[self.heapSize]
+            self.heapSize = self.heapSize - 1
+            return removedNode
+
+        self.heap[self.heapSize]
+
+        # 將目前第一個 node 與最後一個 node switch
+        temp = self.heap[0]
+        self.heap[0] = self.heap[i]
+        self.heap[i] = temp
+        self.heapSize = self.heapSize -1
+        self.maxHeapify(0)                        
     
     def display(self):
         count = 0

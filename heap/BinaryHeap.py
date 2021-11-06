@@ -44,7 +44,9 @@ class BinaryHeap():
              count = count + 1 
             
     def maxHeapify(self, i):
+        # 左邊 node 的 indx
         l = i*2 +1
+        # 右邊 node 的 indx
         r = i*2 +2
 
         # 比較2個子節點是否比 parent 的 key 值大

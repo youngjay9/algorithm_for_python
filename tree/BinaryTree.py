@@ -32,28 +32,28 @@ class BinaryTree():
         self.insertLength = 0
 
     
-    """ 參考 algorithm_datastructure/2_BinaryTree_Traversal """
+    """ 參考 folder algorithm_datastructure/2_BinaryTree_Traversal """
     def postOrder(self, currentNode):
         if currentNode is not None:
             self.postOrder(currentNode.left) # L
             self.postOrder(currentNode.right) # R
             print(currentNode.key + " ") # V
             
-    """ 參考 algorithm_datastructure/2_BinaryTree_Traversal """
+    """ 參考 folder algorithm_datastructure/2_BinaryTree_Traversal """
     def preOrder(self, currentNode):
         if currentNode is not None:
                print(currentNode.key + "") # V
                self.preOrder(currentNode.left) # L
                self.preOrder(currentNode.right) # R 
 
-    """ 參考 algorithm_datastructure/2_BinaryTree_Traversal """
+    """ 參考 folder algorithm_datastructure/2_BinaryTree_Traversal """
     def inOrder(self, currentNode):
         if currentNode is not None:
             self.inOrder(currentNode.left) # L
             print(currentNode.key)  # V
             self.inOrder(currentNode.right) # R
 
-    """ 參考 algorithm_datastructure/2_BinaryTree_Traversal """
+    """ 參考 folder algorithm_datastructure/2_BinaryTree_Traversal """
     def levelOrder(self, currentNode):
         q = queue.Queue() # 可用於多執行緒的 Queue
         q.put(currentNode)
@@ -79,7 +79,7 @@ class BinaryTree():
 
         return currentNode     
 
-    """ 參考 algorithm_datastructure/2_BinaryTree_Traversal """
+    """ 參考 folder algorithm_datastructure/2_BinaryTree_Traversal """
     def inOrderSuccessor(self, currentNode):
         if currentNode is None:
             return currentNode
@@ -103,7 +103,7 @@ class BinaryTree():
 
         return currentNode
 
-    """ 參考 algorithm_datastructure/2_BinaryTree_Traversal """
+    """ 參考 folder algorithm_datastructure/2_BinaryTree_Traversal """
     def inOrderPredecessor(self, currentNode):
         if currentNode is None:
             return currentNode

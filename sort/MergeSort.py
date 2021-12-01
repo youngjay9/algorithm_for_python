@@ -21,10 +21,10 @@ class MergeSort():
 
         leftSub.append(positive_infinity)
         
-        # 將 front ~ mid+1 放至 leftSub[], 並在最後加入無限大元素
+        # 將 mid+1 ~ end 放至 rightSub[], 並在最後加入無限大元素
         rightSub = []
         rightIndx = 0
-        rightCounter = 0
+        rightCounter = mid+1
         while rightCounter <= end:
             rightSub.append(self.arr[rightCounter])
             rightCounter +=1
@@ -45,7 +45,7 @@ class MergeSort():
 
     def mergeSort(self, front, end):
         
-        if len(self.arr) == 1:
+        if front == end:
             return self.arr
         
         mid = math.floor((front+end)/2)
@@ -58,9 +58,13 @@ class MergeSort():
 
 
 if __name__ == "__main__":
-    arr = [3, 5,7, 6,2,8]
+    arr = [5, 7, 3]
     
-    sort = MergeSort()
+    sort = MergeSort(arr)
+    
+    sort.mergeSort(0, len(arr)-1)
+    
+    print(f'{arr}')
     
     
 

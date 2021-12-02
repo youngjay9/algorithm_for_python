@@ -58,7 +58,7 @@ class MergeSort():
 
 
 if __name__ == "__main__":
-    arr = [5, 7, 3]
+    arr = [3,5,7,6,2,8]
     
     sort = MergeSort(arr)
     

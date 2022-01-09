@@ -34,6 +34,7 @@ class Graph:
 
     def dfs(self, start_vertx):
         # recursive 需設定中止條件
+        # 沒有相鄰 vertx 時就停止搜尋
         if start_vertx.key not in self.adj_list:
             return
 
@@ -41,9 +42,31 @@ class Graph:
 
         for adj_vertx in self.adj_list[start_vertx.key]:
             if adj_vertx.visited == VisitStatus.NOT_VISITED:
-                print(f'vertx:{adj_vertx.key}')
                 adj_vertx.visited = VisitStatus.VISITED
+                print(f'dfs_recursive:{adj_vertx.key}')
                 self.dfs(adj_vertx)
+
+    """ 自行維護一個 stack 進行 DFS, 一般不會使用此方法"""
+
+    def dfs_with_stack(self, start_vertx):
+        stack = [start_vertx]
+
+        while stack:
+            visit_vertx = stack.pop()
+            visit_vertx.visited = VisitStatus.VISITED
+            print(f'dfs_with_stack:{visit_vertx.key}')
+
+            if visit_vertx.key not in self.adj_list:
+                continue
+
+            for adj_vertx in self.adj_list[visit_vertx.key]:
+                if adj_vertx.visited == VisitStatus.NOT_VISITED:
+                    adj_vertx.visited = VisitStatus.VISITED
+                    stack.append(adj_vertx)
+
+    def def_with_recursion(self, start_vertx):
+        if start_vertx.key not in self.adj_list[start_vertx.key]:
+            return
 
 
 if __name__ == "__main__":
@@ -68,4 +91,6 @@ if __name__ == "__main__":
     graph.add_edge_list(vertx_d.key, vertx_e)
     graph.add_edge_list(vertx_d.key, vertx_f)
 
-    graph.dfs(vertx_a)
+    # graph.dfs(vertx_a)
+
+    graph.dfs_with_stack(vertx_a)

@@ -66,6 +66,7 @@ class Graph:
                     self.vertx_predecessor[adj_vertx.key] = visit_vertx.key
 
                     # push adj_vertx to queue
+                    print(f'push {adj_vertx.key} to quque')
                     q.put(adj_vertx)
 
 
@@ -96,7 +97,7 @@ if __name__ == "__main__":
     graph.add_edge_list(vertx_c.key, vertx_g)
     graph.add_edge_list(vertx_c.key, vertx_h)
 
-    graph.bfs(vertx_b)
+    graph.bfs(vertx_a)
 
-    print(f"vertx_distance:{json.dumps(graph.vertx_distance)}")
-    print(f"vertx_predecessor:{json.dumps(graph.vertx_predecessor)}")
+    # print(f"vertx_distance:{json.dumps(graph.vertx_distance)}")
+    # print(f"vertx_predecessor:{json.dumps(graph.vertx_predecessor)}")

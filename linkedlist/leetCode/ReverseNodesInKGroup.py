@@ -49,7 +49,7 @@ class Solution:
                 # 指向下一個 k group 的起點
                 k_first_node = next_node.next
 
-                # 第一次執行 reverse, 先指定要回傳的 node
+                # 第一次執行 reverse, 先指定要回傳的第一個 node
                 if first_time_reverse:
                     self.first_node = next_node
                     first_time_reverse = False

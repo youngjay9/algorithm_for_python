@@ -13,6 +13,9 @@ class Node(object):
 
 class Solution:
 
+    def __init__(self):
+        self.first_node = None
+
     """進行 k group 的 reverse"""
 
     def reverse(self, cur_node, next_node, count):
@@ -55,7 +58,8 @@ class Solution:
                     first_time_reverse = False
                 # 第二次執行 reverse 時,指定上一次 reverse 與此次 reverse 的連結
                 else:
-                    prev_node.next = next_node
+                    if prev_node:
+                        prev_node.next = next_node
 
                 # 開始進行 k group 的 reverse, 並回傳此次 reverse 後的最後一個 node, 為下一次 reverse 做連結
                 prev_node = self.reverse(

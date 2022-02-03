@@ -1,4 +1,10 @@
+import time
+
+
 class QuickSort():
+    '''
+        指定 pivot = arr[end], 並回傳 pivot 的 index
+    '''
 
     def partition(self, arr, front, end):
         pivot = arr[end]
@@ -38,8 +44,20 @@ class QuickSort():
 if __name__ == "__main__":
     quick_sort = QuickSort()
 
-    arr = [9, 4, 1, 6, 7, 3, 8, 2, 5]
+    # arr = [9, 4, 1, 6, 7, 3, 8, 2, 5]
+
+    arr = [24, 97, 40, 67, 88, 85, 15,
+
+           66, 53, 44, 26, 48, 16, 52,
+
+           45, 23, 90, 18, 49, 80]
+
+    begin = time.time() * 1000000000
 
     quick_sort.quick_sort(arr, 0, len(arr)-1)
 
+    end = time.time() * 1000000000
+
     print(f'{arr}')
+
+    print(f'{end-begin} ns')

@@ -25,10 +25,13 @@ class QuickSort():
 
     def quick_sort(self, arr, front, end):
         if front < end:
+            # 先對 arr 進行 partition, 並回傳 partition 後 pivot 數字的 index
             partition_indx = self.partition(arr, front, end)
 
+            # 對 partition 左方進行 quick sort
             self.quick_sort(arr, front, partition_indx-1)
 
+            # 對 partition 右方進行 quick sort
             self.quick_sort(arr, partition_indx+1, end)
 
 

@@ -22,7 +22,7 @@ class HashTable:
 
         return hash
 
-    """ 將 key hash 後的 indx 值，放入 hashTable """
+    """ 將 key hash 後的 indx 值放入 hashTable """
 
     def put(self, key, value):
         indx = self.myHash(key)

@@ -17,8 +17,8 @@ class MergeSortLinkedList():
 
     '''不要用 recursive 的方式會比較省記憶體空間'''
 
-    def merge(self, l1, l2):
-        p1, p2 = l1, l2
+    def merge(self, left, right):
+        p1, p2 = left, right
 
         # 設定一個 fake_node 當 merge 過後的 head node
         fake_node = Node(None, None)
@@ -57,6 +57,22 @@ class MergeSortLinkedList():
 
         return slow
 
+    def merge_sort(self, head):
+
+        if not head or not head.next:
+            return head
+
+        middle_node = self.getMiddleNode(head)
+        middle_next_node = middle_node.next
+
+        # 從中間切開,執行 diveide and conquner 進行排序
+        middle_node.next = None
+
+        left = self.merge_sort(head)
+        right = self.merge_sort(middle_next_node)
+
+        return self.merge(left, right)
+
 
 if __name__ == "__main__":
     m = MergeSortLinkedList()
@@ -73,5 +89,14 @@ if __name__ == "__main__":
     node4.next = node5
     node5.next = node6
 
-    middle = m.getMiddleNode(node1)
-    print(f'{middle.key}')
+    head_node = node1
+    while head_node:
+        print(f'{head_node.val}')
+        head_node = head_node.next
+
+    print(f'after merge sort:')
+
+    head_node = m.merge_sort(node1)
+    while head_node:
+        print(f'{head_node.val}')
+        head_node = head_node.next
